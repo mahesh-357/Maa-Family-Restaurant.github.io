@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Maa family restuarant</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --maroon: #2CA58D; /* primary teal (keeps existing var name for compatibility) */
+            --maroon-dark: #1F7F6D; /* dark teal */
+            --gold: #D4AF37;
+            --gold-light: #E8C547;
+            --cream: #E6F4F1; /* light teal background */
+            --cream-dark: #CFEAE4;
+            --dark-green: #1B4332;
+            --dark-green-light: #2D6A4F;
+        }
+
+        * { font-family: 'Poppins', 'Noto Sans Telugu', sans-serif; }
+        .telugu-text { font-family: 'Noto Sans Telugu', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, var(--cream) 0%, var(--cream-dark) 100%);
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .sidebar-link {
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            background: rgba(212, 175, 55, 0.2);
+            border-left: 4px solid var(--gold);
+        }
+
+        .sidebar-link.active {
+            background: rgba(212, 175, 55, 0.3);
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(31, 127, 109, 0.3);
+        }
+
+        /* Table Styles */
+        .data-table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .data-table thead th {
+            background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+            color: white;
+        }
+
+        .data-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .data-table tbody tr:hover {
+            background: var(--cream);
+            transform: scale(1.01);
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px) scale(1.1);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            animation: modalSlide 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(50px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Tab System */
+        .tab-btn {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: var(--gold);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .tab-btn.active::after {
+            width: 80%;
+        }
+
+        .tab-btn.active {
+            color: var(--maroon);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+            animation: tabFadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes tabFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Status Badges */
+        .status-pending {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #78350f;
+        }
+
+        .status-approved {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            color: #064e3b;
+        }
+
+        .status-completed {
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            color: #1e3a8a;
+        }
+
+        .status-cancelled {
+            background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+            color: #7f1d1d;
+        }
+
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Toast Notification */
+        .toast {
+            animation: toastSlide 0.4s ease, toastFade 0.4s ease 2.6s forwards;
+        }
+
+        @keyframes toastSlide {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes toastFade {
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--cream); }
+        ::-webkit-scrollbar-thumb { background: var(--maroon); border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <!-- ============================================
+         SIDEBAR (Desktop)
+         ============================================ -->
+    <aside class="sidebar fixed left-0 top-0 bottom-0 w-64 bg-gradient-to-b from-[#2CA58D] to-[#1F7F6D] text-white z-40 hidden lg:block">
+        <!-- Logo -->
+        <div class="p-6 border-b border-white/20">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-[#D4AF37] flex items-center justify-center">
+                    <span class="text-[#2CA58D] text-xl font-bold telugu-text">అ</span>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">Admin Panel</h1>
+                    <p class="text-[#D4AF37] text-xs">Maa Family Restuarant </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="p-4">
+            <div class="space-y-2">
+                <a href="#" onclick="switchTab('dashboard')" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-lg" data-tab="dashboard">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    Dashboard
+                </a>
+                <a href="#" onclick="switchTab('bookings')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg" data-tab="bookings">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                    Bookings
+                    <span id="bookingsBadge" class="ml-auto bg-[#D4AF37] text-[#2CA58D] text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+                </a>
+                <a href="#" onclick="switchTab('contacts')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg" data-tab="contacts">
+                    <i data-lucide="message-square" class="w-5 h-5"></i>
+                    Messages
+                    <span id="contactsBadge" class="ml-auto bg-[#D4AF37] text-[#2CA58D] text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+                </a>
+                <a href="#" onclick="switchTab('menu')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg" data-tab="menu">
+                    <i data-lucide="utensils" class="w-5 h-5"></i>
+                    Menu Items
+                </a>
+            </div>
+
+            <div class="mt-8 pt-8 border-t border-white/20">
+                <a href="index.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg">
+                    <i data-lucide="globe" class="w-5 h-5"></i>
+                    View Website
+                </a>
+                <button onclick="logout()" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left">
+                    <i data-lucide="log-out" class="w-5 h-5"></i>
+                    Logout
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- ============================================
+         MOBILE HEADER
+         ============================================ -->
+    <header class="lg:hidden fixed top-0 left-0 right-0 bg-gradient-to-r from-[#2CA58D] to-[#1F7F6D] text-white z-50 shadow-lg">
+        <div class="flex items-center justify-between p-4">
+            <button onclick="toggleMobileMenu()" class="p-2 rounded-lg bg-white/10">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-[#D4AF37] flex items-center justify-center">
+                    <span class="text-[#2CA58D] text-sm font-bold telugu-text">అ</span>
+                </div>
+                <span class="font-bold">Admin</span>
+            </div>
+            <button onclick="logout()" class="p-2 rounded-lg bg-white/10">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenuOverlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden" onclick="toggleMobileMenu()"></div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu fixed left-0 top-0 bottom-0 w-64 bg-gradient-to-b from-[#2CA58D] to-[#1F7F6D] text-white z-50 lg:hidden">
+        <div class="p-6 border-b border-white/20">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-[#D4AF37] flex items-center justify-center">
+                        <span class="text-[#2CA58D] text-lg font-bold telugu-text">అ</span>
+                    </div>
+                    <span class="font-bold">Admin Panel</span>
+                </div>
+                <button onclick="toggleMobileMenu()" class="p-2 rounded-lg bg-white/10">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+        <nav class="p-4">
+            <div class="space-y-2">
+                <a href="#" onclick="switchTab('dashboard'); toggleMobileMenu();" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-lg" data-tab="dashboard">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    Dashboard
+                </a>
+                <a href="#" onclick="switchTab('bookings'); toggleMobileMenu();" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg" data-tab="bookings">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                    Bookings
+                </a>
+                <a href="#" onclick="switchTab('contacts'); toggleMobileMenu();" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg" data-tab="contacts">
+                    <i data-lucide="message-square" class="w-5 h-5"></i>
+                    Messages
+                </a>
+                <a href="#" onclick="switchTab('menu'); toggleMobileMenu();" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg" data-tab="menu">
+                    <i data-lucide="utensils" class="w-5 h-5"></i>
+                    Menu Items
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- ============================================
+         MAIN CONTENT
+         ============================================ -->
+    <main class="lg:ml-64 pt-20 lg:pt-0 min-h-screen">
+        <div class="p-6">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-[#2CA58D]" id="pageTitle">Dashboard</h1>
+                <p class="text-gray-600" id="pageSubtitle">Welcome back, Admin!</p>
+            </div>
+
+            <!-- ============================================
+                 DASHBOARD TAB
+                 ============================================ -->
+            <div id="dashboardTab" class="tab-content active">
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Today's Bookings -->
+                    <div class="stat-card bg-white rounded-2xl p-6 shadow-lg">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2CA58D] to-[#1F7F6D] flex items-center justify-center">
+                                <i data-lucide="calendar-check" class="w-6 h-6 text-[#D4AF37]"></i>
+                            </div>
+                            <span class="text-green-500 text-sm font-medium flex items-center gap-1">
+                                <i data-lucide="trending-up" class="w-4 h-4"></i>
+                                +12%
+                            </span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-[#2CA58D]" id="statBookings">0</h3>
+                        <p class="text-gray-500 text-sm">Today's Bookings</p>
+                    </div>
+
+                    <!-- Pending Bookings -->
+                    <div class="stat-card bg-white rounded-2xl p-6 shadow-lg">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#D4AF37] to-[#E8C547] flex items-center justify-center">
+                                <i data-lucide="clock" class="w-6 h-6 text-[#2CA58D]"></i>
+                            </div>
+                            <span class="text-amber-500 text-sm font-medium">Pending</span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-[#2CA58D]" id="statPending">0</h3>
+                        <p class="text-gray-500 text-sm">Awaiting Approval</p>
+                    </div>
+
+                    <!-- Messages -->
+                    <div class="stat-card bg-white rounded-2xl p-6 shadow-lg">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#1B4332] to-[#2D6A4F] flex items-center justify-center">
+                                <i data-lucide="message-circle" class="w-6 h-6 text-[#D4AF37]"></i>
+                            </div>
+                            <span class="text-blue-500 text-sm font-medium">New</span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-[#2CA58D]" id="statMessages">0</h3>
+                        <p class="text-gray-500 text-sm">Unread Messages</p>
+                    </div>
+
+                    <!-- Menu Items -->
+                    <div class="stat-card bg-white rounded-2xl p-6 shadow-lg">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#1F7F6D] to-[#2CA58D] flex items-center justify-center">
+                                <i data-lucide="utensils-crossed" class="w-6 h-6 text-[#D4AF37]"></i>
+                            </div>
+                            <span class="text-purple-500 text-sm font-medium">Active</span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-[#2CA58D]" id="statMenu">0</h3>
+                        <p class="text-gray-500 text-sm">Menu Items</p>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <!-- Recent Bookings -->
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                        <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+                            <h3 class="text-lg font-bold text-[#2CA58D]">Recent Bookings</h3>
+                            <button onclick="switchTab('bookings')" class="text-[#D4AF37] text-sm font-medium hover:underline">View All</button>
+                        </div>
+                        <div id="recentBookings" class="p-6">
+                            <div class="text-center py-8 text-gray-500">
+                                <i data-lucide="loader-2" class="w-8 h-8 mx-auto mb-2 animate-spin"></i>
+                                Loading...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Messages -->
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                        <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+                            <h3 class="text-lg font-bold text-[#2CA58D]">Recent Messages</h3>
+                            <button onclick="switchTab('contacts')" class="text-[#D4AF37] text-sm font-medium hover:underline">View All</button>
+                        </div>
+                        <div id="recentMessages" class="p-6">
+                            <div class="text-center py-8 text-gray-500">
+                                <i data-lucide="loader-2" class="w-8 h-8 mx-auto mb-2 animate-spin"></i>
+                                Loading...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 BOOKINGS TAB
+                 ============================================ -->
+            <div id="bookingsTab" class="tab-content">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
+                        <h3 class="text-lg font-bold text-[#2CA58D]">All Table Bookings</h3>
+                        <div class="flex gap-2">
+                            <select id="bookingFilter" onchange="filterBookings()" class="px-4 py-2 rounded-lg border border-gray-200 text-sm">
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                            <button onclick="refreshBookings()" class="px-4 py-2 rounded-lg bg-[#2CA58D] text-white text-sm flex items-center gap-2">
+                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="data-table w-full">
+                            <thead>
+                                <tr>
+                                    <th class="p-4 text-left rounded-tl-lg">Name</th>
+                                    <th class="p-4 text-left">Phone</th>
+                                    <th class="p-4 text-left">Date</th>
+                                    <th class="p-4 text-left">Time</th>
+                                    <th class="p-4 text-left">Guests</th>
+                                    <th class="p-4 text-left">Status</th>
+                                    <th class="p-4 text-center rounded-tr-lg">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookingsTable">
+                                <tr>
+                                    <td colspan="7" class="p-8 text-center text-gray-500">
+                                        <i data-lucide="loader-2" class="w-8 h-8 mx-auto mb-2 animate-spin"></i>
+                                        Loading bookings...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 CONTACTS TAB
+                 ============================================ -->
+            <div id="contactsTab" class="tab-content">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
+                        <h3 class="text-lg font-bold text-[#2CA58D]">Customer Messages</h3>
+                        <div class="flex gap-2">
+                            <select id="contactFilter" onchange="filterContacts()" class="px-4 py-2 rounded-lg border border-gray-200 text-sm">
+                                <option value="all">All Messages</option>
+                                <option value="unread">Unread</option>
+                                <option value="read">Read</option>
+                            </select>
+                            <button onclick="refreshContacts()" class="px-4 py-2 rounded-lg bg-[#2CA58D] text-white text-sm flex items-center gap-2">
+                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div id="contactsList" class="divide-y divide-gray-100">
+                        <div class="p-8 text-center text-gray-500">
+                            <i data-lucide="loader-2" class="w-8 h-8 mx-auto mb-2 animate-spin"></i>
+                            Loading messages...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 MENU TAB
+                 ============================================ -->
+            <div id="menuTab" class="tab-content">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
+                        <h3 class="text-lg font-bold text-[#2CA58D]">Menu Items</h3>
+                        <button onclick="openAddMenuModal()" class="px-4 py-2 rounded-lg bg-gradient-to-r from-[#2CA58D] to-[#1F7F6D] text-white text-sm flex items-center gap-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            Add New Item
+                        </button>
+                    </div>
+                    <div id="menuGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+                        <div class="col-span-full text-center py-8 text-gray-500">
+                            <i data-lucide="loader-2" class="w-8 h-8 mx-auto mb-2 animate-spin"></i>
+                            Loading menu items...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ============================================
+         ADD MENU ITEM MODAL
+         ============================================ -->
+    <div id="menuModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0 bg-black/60 flex items-center justify-center p-4" onclick="closeMenuModal()">
+            <div class="modal-content bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+                <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-[#2CA58D]" id="menuModalTitle">Add Menu Item</h3>
+                    <button onclick="closeMenuModal()" class="p-2 rounded-full bg-gray-100 hover:bg-gray-200">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <form id="menuForm" onsubmit="saveMenuItem(event)" class="p-6 space-y-4">
+                    <input type="hidden" id="menuItemId">
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Item Name</label>
+                        <input type="text" id="menuName" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#D4AF37] focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <textarea id="menuDescription" rows="2" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#D4AF37] focus:outline-none resize-none"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Price (₹)</label>
+                            <input type="number" id="menuPrice" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#D4AF37] focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                            <select id="menuCategory" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#D4AF37] focus:outline-none">
+                                <option value="soups">Soups</option>
+                                <option value="starters">Starters</option>
+                                <option value="biryanis">Biryanis</option>
+                                <option value="curries">Curries</option>
+                                <option value="desserts">Desserts</option>
+                                <option value="beverages">Beverages</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                        <input type="url" id="menuImage" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#D4AF37] focus:outline-none" placeholder="https://...">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Spice Level</label>
+                            <select id="menuSpice" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#D4AF37] focus:outline-none">
+                                <option value="1">Mild</option>
+                                <option value="2" selected>Medium</option>
+                                <option value="3">Spicy</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Badge</label>
+                            <input type="text" id="menuBadge" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#D4AF37] focus:outline-none" placeholder="e.g. Bestseller">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="menuIsVeg" class="w-5 h-5 rounded border-gray-300 text-[#1B4332] focus:ring-[#1B4332]">
+                            <span class="text-sm font-medium text-gray-700">Vegetarian</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="menuAvailable" checked class="w-5 h-5 rounded border-gray-300 text-[#1B4332] focus:ring-[#1B4332]">
+                            <span class="text-sm font-medium text-gray-700">Available</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="w-full bg-gradient-to-r from-[#2CA58D] to-[#1F7F6D] text-white py-4 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center gap-2">
+                        <i data-lucide="save" class="w-5 h-5"></i>
+                        Save Item
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         TOAST CONTAINER
+         ============================================ -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+
+    <!-- ============================================
+         FIREBASE SDK
+         ============================================ -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc, query, orderBy, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+        // ============================================
+        // FIREBASE CONFIG - ALANATI TELUGU KITCHEN
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAtmkVtNK_BlkGRSLWxlBtsjKymijlMhtY",
+            authDomain: "alanati-telugu-kitchen.firebaseapp.com",
+            projectId: "alanati-telugu-kitchen",
+            storageBucket: "alanati-telugu-kitchen.appspot.com",
+            messagingSenderId: "511397542426",
+            appId: "1:511397542426:web:b0d6856ae4d45c6b716fa3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // ============================================
+        // AUTH CHECK
+        // ============================================
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "admin-login.html";
+            } else {
+                console.log("✅ Logged in as:", user.email);
+                loadAllData();
+            }
+        });
+
+        // ============================================
+        // LOGOUT
+        // ============================================
+        window.logout = async function() {
+            try {
+                await signOut(auth);
+                window.location.href = "admin-login.html";
+            } catch (error) {
+                console.error("Logout error:", error);
+            }
+        };
+
+        // ============================================
+        // LOAD ALL DATA
+        // ============================================
+        async function loadAllData() {
+            await Promise.all([
+                loadBookings(),
+                loadContacts(),
+                loadMenuItems()
+            ]);
+            updateStats();
+        }
+
+        // ============================================
+        // BOOKINGS
+        // ============================================
+        let allBookings = [];
+
+        async function loadBookings() {
+            try {
+                const q = query(collection(db, "bookings"), orderBy("createdAt", "desc"));
+                const snapshot = await getDocs(q);
+                allBookings = [];
+                snapshot.forEach(doc => {
+                    allBookings.push({ id: doc.id, ...doc.data() });
+                });
+                renderBookings(allBookings);
+                renderRecentBookings(allBookings.slice(0, 5));
+                document.getElementById("bookingsBadge").textContent = allBookings.filter(b => b.status === "pending").length;
+            } catch (error) {
+                console.error("Error loading bookings:", error);
+                document.getElementById("bookingsTable").innerHTML = `
+                    <tr><td colspan="7" class="p-8 text-center text-red-500">Error loading bookings</td></tr>
+                `;
+            }
+        }
+
+        function renderBookings(bookings) {
+            const table = document.getElementById("bookingsTable");
+            if (bookings.length === 0) {
+                table.innerHTML = `
+                    <tr><td colspan="7" class="p-8 text-center text-gray-500">
+                        <i data-lucide="calendar-x" class="w-12 h-12 mx-auto mb-2 text-gray-300"></i>
+                        No bookings found
+                    </td></tr>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            table.innerHTML = bookings.map(b => `
+                <tr class="border-t" data-status="${b.status || 'pending'}">
+                    <td class="p-4 font-medium">${b.name || 'N/A'}</td>
+                    <td class="p-4">
+                        <a href="tel:${b.phone}" class="text-[#1B4332] hover:underline">${b.phone || 'N/A'}</a>
+                    </td>
+                    <td class="p-4">${b.date || 'N/A'}</td>
+                    <td class="p-4">${b.time || 'N/A'}</td>
+                    <td class="p-4">${b.guests || b.people || 'N/A'}</td>
+                    <td class="p-4">
+                        <span class="status-${b.status || 'pending'} px-3 py-1 rounded-full text-xs font-bold">
+                            ${(b.status || 'pending').charAt(0).toUpperCase() + (b.status || 'pending').slice(1)}
+                        </span>
+                    </td>
+                    <td class="p-4">
+                        <div class="flex items-center justify-center gap-2">
+                            <button onclick="approveBooking('${b.id}', '${b.name}', '${b.phone}', '${b.date}', '${b.time}')" 
+                                class="action-btn p-2 rounded-lg bg-green-100 text-green-600 hover:bg-green-200" title="Approve & WhatsApp">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="updateBookingStatus('${b.id}', 'completed')" 
+                                class="action-btn p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200" title="Mark Complete">
+                                <i data-lucide="check-check" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="updateBookingStatus('${b.id}', 'cancelled')" 
+                                class="action-btn p-2 rounded-lg bg-amber-100 text-amber-600 hover:bg-amber-200" title="Cancel">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="deleteBooking('${b.id}')" 
+                                class="action-btn p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200" title="Delete">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function renderRecentBookings(bookings) {
+            const container = document.getElementById("recentBookings");
+            if (bookings.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-500 py-4">No recent bookings</p>`;
+                return;
+            }
+
+            container.innerHTML = bookings.map(b => `
+                <div class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+                    <div>
+                        <p class="font-medium text-[#2CA58D]">${b.name}</p>
+                        <p class="text-sm text-gray-500">${b.date} at ${b.time}</p>
+                    </div>
+                    <span class="status-${b.status || 'pending'} px-3 py-1 rounded-full text-xs font-bold">
+                        ${(b.status || 'pending').charAt(0).toUpperCase() + (b.status || 'pending').slice(1)}
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        window.approveBooking = async function(id, name, phone, date, time) {
+            try {
+                await updateDoc(doc(db, "bookings", id), { status: "approved" });
+                showToast("Booking approved!", "success");
+                
+                // Open WhatsApp with pre-filled message
+                const msg = encodeURIComponent(`🍽️ *Booking Confirmed!*\n\nDear ${name},\n\nYour table booking at *Maa Family Restuarant* has been confirmed.\n\n📅 Date: ${date}\n⏰ Time: ${time}\n📍 Location: Vishnu Priya Garden, Hanamkonda\n📞 Contact: 090001 71575\n\nThank you for choosing us!\n\n~ Alanati Telugu Kitchen 🙏`);
+                window.open(`https://wa.me/91${phone.replace(/\D/g, '')}?text=${msg}`, '_blank');
+                
+                loadBookings();
+            } catch (error) {
+                console.error("Error approving:", error);
+                showToast("Error approving booking", "error");
+            }
+        };
+
+        window.updateBookingStatus = async function(id, status) {
+            try {
+                await updateDoc(doc(db, "bookings", id), { status });
+                showToast(`Booking marked as ${status}`, "success");
+                loadBookings();
+            } catch (error) {
+                console.error("Error updating:", error);
+                showToast("Error updating booking", "error");
+            }
+        };
+
+        window.deleteBooking = async function(id) {
+            if (!confirm("Are you sure you want to delete this booking?")) return;
+            try {
+                await deleteDoc(doc(db, "bookings", id));
+                showToast("Booking deleted", "success");
+                loadBookings();
+            } catch (error) {
+                console.error("Error deleting:", error);
+                showToast("Error deleting booking", "error");
+            }
+        };
+
+        window.refreshBookings = loadBookings;
+
+        window.filterBookings = function() {
+            const filter = document.getElementById("bookingFilter").value;
+            if (filter === "all") {
+                renderBookings(allBookings);
+            } else {
+                renderBookings(allBookings.filter(b => (b.status || 'pending') === filter));
+            }
+        };
+
+        // ============================================
+        // CONTACTS
+        // ============================================
+        let allContacts = [];
+
+        async function loadContacts() {
+            try {
+                const q = query(collection(db, "contacts"), orderBy("createdAt", "desc"));
+                const snapshot = await getDocs(q);
+                allContacts = [];
+                snapshot.forEach(doc => {
+                    allContacts.push({ id: doc.id, ...doc.data() });
+                });
+                renderContacts(allContacts);
+                renderRecentMessages(allContacts.slice(0, 5));
+                document.getElementById("contactsBadge").textContent = allContacts.filter(c => c.status === "unread").length;
+            } catch (error) {
+                console.error("Error loading contacts:", error);
+            }
+        }
+
+        function renderContacts(contacts) {
+            const container = document.getElementById("contactsList");
+            if (contacts.length === 0) {
+                container.innerHTML = `
+                    <div class="p-8 text-center text-gray-500">
+                        <i data-lucide="message-circle" class="w-12 h-12 mx-auto mb-2 text-gray-300"></i>
+                        No messages found
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = contacts.map(c => `
+                <div class="p-6 hover:bg-[#FFF8E7] transition-colors ${c.status === 'unread' ? 'bg-amber-50' : ''}">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="font-bold text-[#2CA58D]">${c.name || 'Unknown'}</span>
+                                <a href="tel:${c.phone}" class="text-sm text-[#1B4332] hover:underline">${c.phone || ''}</a>
+                                ${c.status === 'unread' ? '<span class="bg-amber-400 text-amber-900 text-xs font-bold px-2 py-0.5 rounded-full">New</span>' : ''}
+                            </div>
+                            <p class="text-gray-700">${c.message || 'No message'}</p>
+                            <p class="text-xs text-gray-400 mt-2">${c.createdAt?.toDate ? c.createdAt.toDate().toLocaleString() : 'Unknown date'}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="markContactRead('${c.id}')" 
+                                class="action-btn p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200" title="Mark as Read">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </button>
+                            <a href="https://wa.me/91${(c.phone || '').replace(/\D/g, '')}" target="_blank"
+                                class="action-btn p-2 rounded-lg bg-green-100 text-green-600 hover:bg-green-200" title="Reply on WhatsApp">
+                                <i data-lucide="message-circle" class="w-4 h-4"></i>
+                            </a>
+                            <button onclick="deleteContact('${c.id}')" 
+                                class="action-btn p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200" title="Delete">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function renderRecentMessages(contacts) {
+            const container = document.getElementById("recentMessages");
+            if (contacts.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-500 py-4">No messages yet</p>`;
+                return;
+            }
+
+            container.innerHTML = contacts.map(c => `
+                <div class="flex items-start gap-3 py-3 border-b border-gray-100 last:border-0">
+                    <div class="w-10 h-10 rounded-full bg-[#2CA58D]/10 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="user" class="w-5 h-5 text-[#2CA58D]"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-medium text-[#2CA58D]">${c.name}</p>
+                        <p class="text-sm text-gray-500 truncate">${c.message || 'No message'}</p>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        window.markContactRead = async function(id) {
+            try {
+                await updateDoc(doc(db, "contacts", id), { status: "read" });
+                showToast("Marked as read", "success");
+                loadContacts();
+            } catch (error) {
+                console.error("Error updating:", error);
+            }
+        };
+
+        window.deleteContact = async function(id) {
+            if (!confirm("Delete this message?")) return;
+            try {
+                await deleteDoc(doc(db, "contacts", id));
+                showToast("Message deleted", "success");
+                loadContacts();
+            } catch (error) {
+                console.error("Error deleting:", error);
+            }
+        };
+
+        window.refreshContacts = loadContacts;
+
+        window.filterContacts = function() {
+            const filter = document.getElementById("contactFilter").value;
+            if (filter === "all") {
+                renderContacts(allContacts);
+            } else {
+                renderContacts(allContacts.filter(c => (c.status || 'unread') === filter));
+            }
+        };
+
+        // ============================================
+        // MENU ITEMS
+        // ============================================
+        let allMenuItems = [];
+
+        async function loadMenuItems() {
+            try {
+                const snapshot = await getDocs(collection(db, "menu"));
+                allMenuItems = [];
+                snapshot.forEach(doc => {
+                    allMenuItems.push({ id: doc.id, ...doc.data() });
+                });
+                renderMenuItems(allMenuItems);
+            } catch (error) {
+                console.error("Error loading menu:", error);
+                document.getElementById("menuGrid").innerHTML = `
+                    <div class="col-span-full text-center py-8 text-red-500">Error loading menu items</div>
+                `;
+            }
+        }
+
+        function renderMenuItems(items) {
+            const grid = document.getElementById("menuGrid");
+            if (items.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-8 text-gray-500">
+                        <i data-lucide="utensils" class="w-12 h-12 mx-auto mb-2 text-gray-300"></i>
+                        <p>No menu items yet</p>
+                        <button onclick="openAddMenuModal()" class="mt-4 text-[#D4AF37] font-medium hover:underline">Add your first item</button>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            grid.innerHTML = items.map(item => `
+                <div class="bg-[#FFF8E7] rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                    <div class="h-40 bg-gradient-to-br from-[#D4AF37]/20 to-[#2CA58D]/20 relative">
+                        <img src="${item.image || 'https://via.placeholder.com/400x300?text=No+Image'}" alt="${item.name}" 
+                            class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/400x300?text=No+Image'">
+                        <div class="absolute top-3 left-3 ${item.isVeg ? 'bg-green-500' : 'bg-red-500'} text-white text-xs font-bold px-2 py-1 rounded">
+                            ${item.isVeg ? 'VEG' : 'NON-VEG'}
+                        </div>
+                        ${item.badge ? `<div class="absolute top-3 right-3 bg-[#D4AF37] text-[#2CA58D] text-xs font-bold px-2 py-1 rounded">${item.badge}</div>` : ''}
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <h4 class="font-bold text-[#2CA58D]">${item.name}</h4>
+                            <span class="font-bold text-[#1B4332]">₹${item.price}</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3 line-clamp-2">${item.description || 'No description'}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-500 capitalize">${item.category || 'Other'}</span>
+                            <div class="flex gap-2">
+                                <button onclick='editMenuItem(${JSON.stringify(item).replace(/'/g, "\\'")})'
+                                    class="action-btn p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200">
+                                    <i data-lucide="edit-2" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="deleteMenuItem('${item.id}')"
+                                    class="action-btn p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        window.openAddMenuModal = function() {
+            document.getElementById("menuModalTitle").textContent = "Add Menu Item";
+            document.getElementById("menuForm").reset();
+            document.getElementById("menuItemId").value = "";
+            document.getElementById("menuModal").classList.remove("hidden");
+        };
+
+        window.editMenuItem = function(item) {
+            document.getElementById("menuModalTitle").textContent = "Edit Menu Item";
+            document.getElementById("menuItemId").value = item.id;
+            document.getElementById("menuName").value = item.name || "";
+            document.getElementById("menuDescription").value = item.description || "";
+            document.getElementById("menuPrice").value = item.price || "";
+            document.getElementById("menuCategory").value = item.category || "starters";
+            document.getElementById("menuImage").value = item.image || "";
+            document.getElementById("menuSpice").value = item.spiceLevel || 2;
+            document.getElementById("menuBadge").value = item.badge || "";
+            document.getElementById("menuIsVeg").checked = item.isVeg || false;
+            document.getElementById("menuAvailable").checked = item.available !== false;
+            document.getElementById("menuModal").classList.remove("hidden");
+        };
+
+        window.closeMenuModal = function() {
+            document.getElementById("menuModal").classList.add("hidden");
+        };
+
+        window.saveMenuItem = async function(event) {
+            event.preventDefault();
+            const id = document.getElementById("menuItemId").value;
+            const data = {
+                name: document.getElementById("menuName").value,
+                description: document.getElementById("menuDescription").value,
+                price: parseInt(document.getElementById("menuPrice").value),
+                category: document.getElementById("menuCategory").value,
+                image: document.getElementById("menuImage").value,
+                spiceLevel: parseInt(document.getElementById("menuSpice").value),
+                badge: document.getElementById("menuBadge").value,
+                isVeg: document.getElementById("menuIsVeg").checked,
+                available: document.getElementById("menuAvailable").checked,
+                updatedAt: serverTimestamp()
+            };
+
+            try {
+                if (id) {
+                    await updateDoc(doc(db, "menu", id), data);
+                    showToast("Menu item updated!", "success");
+                } else {
+                    data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "menu"), data);
+                    showToast("Menu item added!", "success");
+                }
+                closeMenuModal();
+                loadMenuItems();
+            } catch (error) {
+                console.error("Error saving:", error);
+                showToast("Error saving menu item", "error");
+            }
+        };
+
+        window.deleteMenuItem = async function(id) {
+            if (!confirm("Delete this menu item?")) return;
+            try {
+                await deleteDoc(doc(db, "menu", id));
+                showToast("Menu item deleted", "success");
+                loadMenuItems();
+            } catch (error) {
+                console.error("Error deleting:", error);
+                showToast("Error deleting item", "error");
+            }
+        };
+
+        // ============================================
+        // STATS
+        // ============================================
+        function updateStats() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById("statBookings").textContent = allBookings.filter(b => b.date === today).length;
+            document.getElementById("statPending").textContent = allBookings.filter(b => (b.status || 'pending') === 'pending').length;
+            document.getElementById("statMessages").textContent = allContacts.filter(c => (c.status || 'unread') === 'unread').length;
+            document.getElementById("statMenu").textContent = allMenuItems.length;
+        }
+
+        // ============================================
+        // TOAST NOTIFICATIONS
+        // ============================================
+        window.showToast = function(message, type = "info") {
+            const container = document.getElementById("toastContainer");
+            const colors = {
+                success: "bg-green-500",
+                error: "bg-red-500",
+                info: "bg-blue-500"
+            };
+            const icons = {
+                success: "check-circle",
+                error: "alert-circle",
+                info: "info"
+            };
+
+            const toast = document.createElement("div");
+            toast.className = `toast ${colors[type]} text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3`;
+            toast.innerHTML = `
+                <i data-lucide="${icons[type]}" class="w-5 h-5"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => toast.remove(), 3000);
+        };
+
+        console.log("🔥 Admin Dashboard initialized");
+    </script>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Tab Switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            document.querySelectorAll(`[data-tab="${tabName}"]`).forEach(link => link.classList.add('active'));
+
+            // Update header
+            const titles = {
+                dashboard: ['Dashboard', 'Welcome back, Admin!'],
+                bookings: ['Table Bookings', 'Manage customer reservations'],
+                contacts: ['Customer Messages', 'View and respond to inquiries'],
+                menu: ['Menu Management', 'Add, edit, or remove menu items']
+            };
+            document.getElementById('pageTitle').textContent = titles[tabName][0];
+            document.getElementById('pageSubtitle').textContent = titles[tabName][1];
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            menu.classList.toggle('open');
+            overlay.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - Maa Family Restaurant | Authentic Telugu Cuisine</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --teal: #2CA58D;
+            --teal-dark: #1F7F6D;
+            --gold: #D4AF37;
+            --gold-light: #E8C547;
+            --cream: #E6F4F1;
+            --cream-dark: #CFEAE4;
+            --dark-green: #1B4332;
+            --dark-green-light: #2D6A4F;
+            --maroon: var(--teal);
+            --maroon-dark: var(--teal-dark);
+        }
+
+        /* Legacy maroon hex/class overrides: map old maroon tokens to teal */
+        [class*="text-[#800020]"] { color: #2CA58D !important; }
+        [class*="text-[#5c0017]"] { color: #1F7F6D !important; }
+        [class*="bg-[#800020]"] { background-color: #2CA58D !important; background-image: none !important; }
+        [class*="bg-[#5c0017]"] { background-color: #1F7F6D !important; background-image: none !important; }
+        [class*="from-[#800020]"] { --legacy-from-color: #2CA58D !important; }
+        [class*="to-[#800020]"] { --legacy-to-color: #2CA58D !important; }
+        [class*="from-[#5c0017]"] { --legacy-from-dark: #1F7F6D !important; }
+        [class*="to-[#5c0017]"] { --legacy-to-dark: #1F7F6D !important; }
+
+        /* Generic attribute-based fallbacks for classes containing old hex tokens */
+        [class*="#800020"] { color: #2CA58D !important; }
+        [class*="#5c0017"] { color: #1F7F6D !important; }
+
+        * { font-family: 'Poppins', 'Noto Sans Telugu', sans-serif; }
+        .telugu-text { font-family: 'Noto Sans Telugu', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, var(--cream) 0%, var(--cream-dark) 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .perspective-container {
+            perspective: 1500px;
+            transform-style: preserve-3d;
+        }
+
+        .menu-card-3d {
+            transform-style: preserve-3d;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            animation: cardFloat 6s ease-in-out infinite;
+        }
+
+        .menu-card-3d:hover {
+            transform: translateY(-12px) rotateX(8deg) scale(1.03);
+            box-shadow: 0 30px 60px -15px rgba(44, 165, 141, 0.4), 0 0 0 1px rgba(212, 175, 55, 0.3);
+        }
+
+        @keyframes cardFloat {
+            0%, 100% { transform: translateY(0) rotateX(0); }
+            50% { transform: translateY(-5px) rotateX(2deg); }
+        }
+
+        .menu-card-3d:nth-child(odd) { animation-delay: 0s; }
+        .menu-card-3d:nth-child(even) { animation-delay: 0.5s; }
+
+        .card-3d-shadow {
+            box-shadow: 0 25px 50px -12px rgba(44, 165, 141, 0.25), 0 0 0 1px rgba(212, 175, 55, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        .image-shine {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-shine::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .image-shine:hover::after { left: 100%; }
+
+        .navbar-depth {
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 30px rgba(44, 165, 141, 0.15), 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        .page-transition {
+            animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stagger-item {
+            opacity: 0;
+            animation: slideUp 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        .touch-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .touch-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.3) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .touch-btn:active::after { opacity: 1; }
+        .touch-btn:active { transform: scale(0.97); }
+
+        .category-tab {
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+        }
+
+        .category-tab::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: var(--gold);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .category-tab.active::after { width: 80%; }
+        .category-tab.active { color: var(--teal); font-weight: 600; }
+
+        .price-tag { animation: pricePulse 2s ease-in-out infinite; }
+
+        @keyframes pricePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .bottom-nav {
+            box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(20px);
+        }
+
+        .nav-item { transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1); }
+        .nav-item.active { transform: translateY(-5px); }
+        .nav-item.active .nav-icon { background: var(--teal); color: white; }
+
+        .veg-indicator {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #2D6A4F;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .veg-indicator::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #2D6A4F;
+            border-radius: 50%;
+        }
+
+        .nonveg-indicator { border-color: #2CA58D; }
+        .nonveg-indicator::after { background: #2CA58D; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--cream); }
+        ::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 4px; }
+
+        .category-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .category-section.visible { opacity: 1; transform: translateY(0); }
+
+        .categories-scroll {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .categories-scroll::-webkit-scrollbar { display: none; }
+
+        .popular-badge { animation: badgeGlow 2s ease-in-out infinite; }
+
+        @keyframes badgeGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.8); }
+        }
+
+        .search-focus { transition: all 0.3s ease; }
+        .search-focus:focus-within { transform: scale(1.02); box-shadow: 0 10px 40px rgba(44, 165, 141, 0.2); }
+
+        .spice-level { display: flex; gap: 2px; }
+        .spice-dot { width: 6px; height: 6px; border-radius: 50%; background: #ddd; }
+        .spice-dot.active { background: #ff6b35; }
+
+        .cart-bounce { animation: cartBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+
+        @keyframes cartBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .modal-overlay {
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .modal-content { animation: modalSlide 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
+
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(100px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .loading-card {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="pb-20 md:pb-0">
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm h-[72px]">
+        <div class="max-w-7xl mx-auto px-4 h-full">
+            <div class="flex items-center justify-between h-full">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-[#2CA58D] flex items-center justify-center shadow-sm">
+                        <img src="assets/images/logo.png" alt="Maa Family Restaurant Logo" class="w-8 h-8 object-cover rounded-full">
+                    </div>
+                    <div>
+                        <h1 class="text-[#2CA58D] font-bold text-lg leading-tight">Maa Family Restaurant</h1>
+                        <p class="text-[#1B4332] text-xs telugu-text">మా ఫ్యామిలీ రెస్టారెంట్</p>
+                    </div>
+                </div>
+
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="index.html" class="text-[#2CA58D] hover:text-[#D4AF37] transition-colors font-medium border-b-2 border-transparent hover:border-[#D4AF37]">Home</a>
+                    <a href="#" class="text-[#2CA58D] font-semibold border-b-2 border-[#D4AF37]">Menu</a>
+                    <a href="contact.html" class="text-[#2CA58D] hover:text-[#D4AF37] transition-colors font-medium border-b-2 border-transparent hover:border-[#D4AF37]">Contact</a>
+                    <a href="https://www.swiggy.com/city/warangal/maa-family-restaurant-jayaprakash-narayan-road-girmajipet-rest589082?utm_source=GooglePlaceOrder&utm_campaign=GoogleMap&is_retargeting=true&media_source=GooglePlaceOrder" target="_blank" class="touch-btn bg-[#2CA58D] hover:bg-[#1F7F6D] text-white px-4 py-2 rounded-full font-medium shadow-sm flex items-center gap-2">
+                        <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                        Order on Swiggy
+                    </a>
+                </div>
+
+                <button class="md:hidden touch-btn p-2 rounded-lg bg-[#2CA58D]/10" onclick="toggleMobileMenu()">
+                    <i data-lucide="menu" class="w-6 h-6 text-[#2CA58D]"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="fixed inset-0 z-40 hidden">
+        <div class="absolute inset-0 bg-black/50" onclick="toggleMobileMenu()"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-72 bg-[#FFF8E7] shadow-2xl p-6">
+            <div class="flex justify-end mb-8">
+                <button onclick="toggleMobileMenu()" class="p-2 rounded-full bg-[#800020]/10">
+                    <i data-lucide="x" class="w-6 h-6 text-[#2CA58D]"></i>
+                </button>
+            </div>
+            <nav class="space-y-4">
+                <a href="index.html" class="block text-[#2CA58D] text-lg font-medium py-3 border-b border-[#D4AF37]/30">Home</a>
+                <a href="#" class="block text-[#D4AF37] text-lg font-semibold py-3 border-b border-[#D4AF37]/30">Menu</a>
+                <a href="contact.html" class="block text-[#2CA58D] text-lg font-medium py-3 border-b border-[#D4AF37]/30">Contact</a>
+            </nav>
+            <a href="https://www.swiggy.com/city/warangal/maa-family-restaurant-jayaprakash-narayan-road-girmajipet-rest589082?utm_source=GooglePlaceOrder&utm_campaign=GoogleMap&is_retargeting=true&media_source=GooglePlaceOrder" target="_blank" class="mt-8 touch-btn bg-gradient-to-r from-[#2CA58D] to-[#1F7F6D] text-white px-5 py-3 rounded-full font-medium shadow-lg flex items-center justify-center gap-2">
+                <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                Order on Swiggy
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="pt-24 px-4 max-w-7xl mx-auto">
+        <!-- Hero -->
+        <section class="text-center mb-8 page-transition">
+            <h2 class="text-4xl md:text-5xl font-bold text-[#2CA58D] mb-3">Our Menu</h2>
+            <p class="text-[#1B4332] text-lg max-w-2xl mx-auto">Authentic Telugu cuisine crafted with love and tradition</p>
+        </section>
+
+        <!-- Search Bar -->
+        <div class="max-w-xl mx-auto mb-8 page-transition" style="animation-delay: 0.1s;">
+            <div class="search-focus bg-white rounded-2xl shadow-lg p-2 flex items-center gap-3">
+                <div class="pl-4">
+                    <i data-lucide="search" class="w-5 h-5 text-gray-400"></i>
+                </div>
+                <input type="text" id="searchInput" placeholder="Search dishes..." class="flex-1 py-3 pr-4 outline-none text-[#2CA58D] placeholder-gray-400" onkeyup="searchMenu()">
+                <button class="touch-btn bg-gradient-to-r from-[#2CA58D] to-[#1F7F6D] text-white p-3 rounded-xl">
+                    <i data-lucide="sliders-horizontal" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="mb-8 page-transition" style="animation-delay: 0.2s;">
+            <div class="categories-scroll flex gap-3 overflow-x-auto pb-4 px-2">
+                <button onclick="filterCategory('all')" class="category-tab active touch-btn whitespace-nowrap px-6 py-3 rounded-full bg-white shadow-md text-[#2CA58D] font-medium flex items-center gap-2" data-category="all">
+                    <i data-lucide="utensils" class="w-4 h-4"></i>
+                    All Items
+                </button>
+                <button onclick="filterCategory('soups')" class="category-tab touch-btn whitespace-nowrap px-6 py-3 rounded-full bg-white shadow-md text-gray-600 font-medium flex items-center gap-2" data-category="soups">
+                    <i data-lucide="soup" class="w-4 h-4"></i>
+                    Soups
+                </button>
+                <button onclick="filterCategory('starters')" class="category-tab touch-btn whitespace-nowrap px-6 py-3 rounded-full bg-white shadow-md text-gray-600 font-medium flex items-center gap-2" data-category="starters">
+                    <i data-lucide="flame" class="w-4 h-4"></i>
+                    Starters
+                </button>
+                <button onclick="filterCategory('biryanis')" class="category-tab touch-btn whitespace-nowrap px-6 py-3 rounded-full bg-white shadow-md text-gray-600 font-medium flex items-center gap-2" data-category="biryanis">
+                    <i data-lucide="beef" class="w-4 h-4"></i>
+                    Biryanis
+                </button>
+                <button onclick="filterCategory('curries')" class="category-tab touch-btn whitespace-nowrap px-6 py-3 rounded-full bg-white shadow-md text-gray-600 font-medium flex items-center gap-2" data-category="curries">
+                    <i data-lucide="chef-hat" class="w-4 h-4"></i>
+                    Curries
+                </button>
+                <button onclick="filterCategory('desserts')" class="category-tab touch-btn whitespace-nowrap px-6 py-3 rounded-full bg-white shadow-md text-gray-600 font-medium flex items-center gap-2" data-category="desserts">
+                    <i data-lucide="cake" class="w-4 h-4"></i>
+                    Desserts
+                </button>
+                <button onclick="filterCategory('beverages')" class="category-tab touch-btn whitespace-nowrap px-6 py-3 rounded-full bg-white shadow-md text-gray-600 font-medium flex items-center gap-2" data-category="beverages">
+                    <i data-lucide="cup-soda" class="w-4 h-4"></i>
+                    Beverages
+                </button>
+            </div>
+        </div>
+
+        <!-- ============================================
+             FIREBASE MENU ITEMS (DYNAMIC FROM DATABASE)
+             ============================================ -->
+        <div id="menuContainer" class="perspective-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <!-- Menu items will be loaded from Firebase here -->
+            <div class="col-span-full text-center py-8">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-[#2CA58D]/10 flex items-center justify-center">
+                    <i data-lucide="loader-2" class="w-8 h-8 text-[#2CA58D] animate-spin"></i>
+                </div>
+                <p class="text-gray-500">Loading menu from Firebase...</p>
+            </div>
+        </div>
+
+        <!-- Static Menu Sections (Fallback) -->
+        <div id="staticMenuFallback">
+            
+            <!-- SOUPS SECTION -->
+            <section class="category-section mb-12" data-section="soups">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#2CA58D] to-[#1F7F6D] flex items-center justify-center shadow-lg">
+                        <i data-lucide="soup" class="w-6 h-6 text-[#D4AF37]"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-[#2CA58D]">Soups</h3>
+                        <p class="text-gray-500 text-sm">Warm & comforting starters</p>
+                    </div>
+                </div>
+                
+                <div class="perspective-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Soup 1 -->
+                    <div class="menu-card-3d card-3d-shadow bg-white rounded-3xl overflow-hidden stagger-item" data-name="Amma Chethi Charu" data-category="soups">
+                        <div class="image-shine relative h-48 bg-gradient-to-br from-[#D4AF37]/20 to-[#800020]/20">
+                            <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop" alt="Amma Chethi Charu" class="w-full h-full object-cover">
+                            <div class="absolute top-4 left-4 veg-indicator"></div>
+                            <div class="absolute top-4 right-4 popular-badge bg-[#D4AF37] text-[#2CA58D] text-xs font-bold px-3 py-1 rounded-full">Popular</div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#2CA58D] font-bold text-lg">Amma Chethi Charu</h4>
+                                <span class="price-tag bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] text-white font-bold px-3 py-1 rounded-full text-sm">₹99</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-3">Traditional tomato rasam made Telugu-style</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-gray-500">Spice:</span>
+                                    <div class="spice-level">
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot"></span>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Soup 2 -->
+                    <div class="menu-card-3d card-3d-shadow bg-white rounded-3xl overflow-hidden stagger-item" data-name="Chicken Miryala Charu" data-category="soups" style="animation-delay: 0.1s;">
+                        <div class="image-shine relative h-48 bg-gradient-to-br from-[#D4AF37]/20 to-[#800020]/20">
+                            <img src="https://images.unsplash.com/photo-1604152135912-04a022e23696?w=400&h=300&fit=crop" alt="Chicken Miryala Charu" class="w-full h-full object-cover">
+                            <div class="absolute top-4 left-4 veg-indicator nonveg-indicator"></div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#2CA58D] font-bold text-lg">Chicken Miryala Charu</h4>
+                                <span class="price-tag bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] text-white font-bold px-3 py-1 rounded-full text-sm">₹129</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-3">Pepper-flavored chicken soup</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-gray-500">Spice:</span>
+                                    <div class="spice-level">
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STARTERS SECTION -->
+            <section class="category-section mb-12" data-section="starters">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1B4332] to-[#2D6A4F] flex items-center justify-center shadow-lg">
+                        <i data-lucide="flame" class="w-6 h-6 text-[#D4AF37]"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-[#2CA58D]">Starters</h3>
+                        <p class="text-gray-500 text-sm">Crispy & flavorful appetizers</p>
+                    </div>
+                </div>
+                
+                <div class="perspective-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Starter 1 -->
+                    <div class="menu-card-3d card-3d-shadow bg-white rounded-3xl overflow-hidden stagger-item" data-name="Veg Manchuria" data-category="starters">
+                        <div class="image-shine relative h-48 bg-gradient-to-br from-[#D4AF37]/20 to-[#800020]/20">
+                            <img src="https://images.unsplash.com/photo-1645177628172-a94c1f96e6db?w=400&h=300&fit=crop" alt="Veg Manchuria" class="w-full h-full object-cover">
+                            <div class="absolute top-4 left-4 veg-indicator"></div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#2CA58D] font-bold text-lg">Veg Manchuria</h4>
+                                <span class="price-tag bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] text-white font-bold px-3 py-1 rounded-full text-sm">₹199</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-3">Crispy vegetables tossed in Indo-Chinese sauce</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-gray-500">Spice:</span>
+                                    <div class="spice-level">
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot"></span>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Starter 2 -->
+                    <div class="menu-card-3d card-3d-shadow bg-white rounded-3xl overflow-hidden stagger-item" data-name="Gobi Manchuria" data-category="starters" style="animation-delay: 0.1s;">
+                        <div class="image-shine relative h-48 bg-gradient-to-br from-[#D4AF37]/20 to-[#800020]/20">
+                            <img src="https://images.unsplash.com/photo-1567337710282-00832b415979?w=400&h=300&fit=crop" alt="Gobi Manchuria" class="w-full h-full object-cover">
+                            <div class="absolute top-4 left-4 veg-indicator"></div>
+                            <div class="absolute top-4 right-4 popular-badge bg-[#D4AF37] text-[#2CA58D] text-xs font-bold px-3 py-1 rounded-full">Bestseller</div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#2CA58D] font-bold text-lg">Gobi Manchuria</h4>
+                                <span class="price-tag bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] text-white font-bold px-3 py-1 rounded-full text-sm">₹239</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-3">Golden fried cauliflower in spicy sauce</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-gray-500">Spice:</span>
+                                    <div class="spice-level">
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Starter 3 -->
+                    <div class="menu-card-3d card-3d-shadow bg-white rounded-3xl overflow-hidden stagger-item" data-name="Chicken 65" data-category="starters" style="animation-delay: 0.2s;">
+                        <div class="image-shine relative h-48 bg-gradient-to-br from-[#D4AF37]/20 to-[#800020]/20">
+                            <img src="https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?w=400&h=300&fit=crop" alt="Chicken 65" class="w-full h-full object-cover">
+                            <div class="absolute top-4 left-4 veg-indicator nonveg-indicator"></div>
+                            <div class="absolute top-4 right-4 popular-badge bg-[#D4AF37] text-[#2CA58D] text-xs font-bold px-3 py-1 rounded-full">Popular</div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#2CA58D] font-bold text-lg">Chicken 65</h4>
+                                <span class="price-tag bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] text-white font-bold px-3 py-1 rounded-full text-sm">₹289</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-3">Classic Hyderabadi spicy deep-fried chicken</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-gray-500">Spice:</span>
+                                    <div class="spice-level">
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                    </div>
+                                </div>
+                               
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Starter 4: Kodi Vepudu -->
+                    <div class="menu-card-3d card-3d-shadow bg-white rounded-3xl overflow-hidden stagger-item" data-name="Kodi Vepudu" data-category="starters" style="animation-delay: 0.3s;">
+                        <div class="image-shine relative h-48 bg-gradient-to-br from-[#D4AF37]/20 to-[#800020]/20">
+                            <img src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400&h=300&fit=crop" alt="Kodi Vepudu" class="w-full h-full object-cover">
+                            <div class="absolute top-4 left-4 veg-indicator nonveg-indicator"></div>
+                            <div class="absolute top-4 right-4 bg-[#800020] text-white text-xs font-bold px-3 py-1 rounded-full">Telugu Special</div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#2CA58D] font-bold text-lg">Kodi Vepudu</h4>
+                                <span class="price-tag bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] text-white font-bold px-3 py-1 rounded-full text-sm">₹349</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-3">Spicy Andhra-style chicken fry with aromatic spices</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-gray-500">Spice:</span>
+                                    <div class="spice-level">
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- BIRYANIS SECTION -->
+            <section class="category-section mb-12" data-section="biryanis">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#D4AF37] to-[#E8C547] flex items-center justify-center shadow-lg">
+                        <i data-lucide="flame" class="w-6 h-6 text-[#2CA58D]"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-[#800020]">Biryanis</h3>
+                        <p class="text-gray-500 text-sm">Signature Hyderabadi dum biryanis</p>
+                    </div>
+                </div>
+                
+                <div class="perspective-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Biryani 1 -->
+                    <div class="menu-card-3d card-3d-shadow bg-white rounded-3xl overflow-hidden stagger-item" data-name="Chicken Dum Biryani" data-category="biryanis">
+                        <div class="image-shine relative h-48 bg-gradient-to-br from-[#D4AF37]/20 to-[#800020]/20">
+                            <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&h=300&fit=crop" alt="Chicken Dum Biryani" class="w-full h-full object-cover">
+                            <div class="absolute top-4 left-4 veg-indicator nonveg-indicator"></div>
+                            <div class="absolute top-4 right-4 popular-badge bg-[#D4AF37] text-[#800020] text-xs font-bold px-3 py-1 rounded-full">#1 Bestseller</div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#800020] font-bold text-lg">Chicken Dum Biryani</h4>
+                                <span class="price-tag bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] text-white font-bold px-3 py-1 rounded-full text-sm">₹299</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-3">Authentic Hyderabadi style dum biryani</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-gray-500">Spice:</span>
+                                    <div class="spice-level">
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Biryani 2 -->
+                    <div class="menu-card-3d card-3d-shadow bg-white rounded-3xl overflow-hidden stagger-item" data-name="Mutton Dum Biryani" data-category="biryanis" style="animation-delay: 0.1s;">
+                        <div class="image-shine relative h-48 bg-gradient-to-br from-[#D4AF37]/20 to-[#800020]/20">
+                            <img src="https://images.unsplash.com/photo-1642821373181-cb044e76b586?w=400&h=300&fit=crop" alt="Mutton Dum Biryani" class="w-full h-full object-cover">
+                            <div class="absolute top-4 left-4 veg-indicator nonveg-indicator"></div>
+                            <div class="absolute top-4 right-4 bg-[#800020] text-white text-xs font-bold px-3 py-1 rounded-full">Premium</div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#800020] font-bold text-lg">Mutton Dum Biryani</h4>
+                                <span class="price-tag bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] text-white font-bold px-3 py-1 rounded-full text-sm">₹399</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-3">Slow-cooked mutton with aromatic rice</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-gray-500">Spice:</span>
+                                    <div class="spice-level">
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Biryani 3 -->
+                    <div class="menu-card-3d card-3d-shadow bg-white rounded-3xl overflow-hidden stagger-item" data-name="Veg Dum Biryani" data-category="biryanis" style="animation-delay: 0.2s;">
+                        <div class="image-shine relative h-48 bg-gradient-to-br from-[#D4AF37]/20 to-[#800020]/20">
+                            <img src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=400&h=300&fit=crop" alt="Veg Dum Biryani" class="w-full h-full object-cover">
+                            <div class="absolute top-4 left-4 veg-indicator"></div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#800020] font-bold text-lg">Veg Dum Biryani</h4>
+                                <span class="price-tag bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] text-white font-bold px-3 py-1 rounded-full text-sm">₹249</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-3">Garden fresh vegetables with fragrant rice</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-gray-500">Spice:</span>
+                                    <div class="spice-level">
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot"></span>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CURRIES SECTION -->
+            <section class="category-section mb-12" data-section="curries">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#800020] to-[#5c0017] flex items-center justify-center shadow-lg">
+                        <i data-lucide="chef-hat" class="w-6 h-6 text-[#D4AF37]"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-[#800020]">Curries</h3>
+                        <p class="text-gray-500 text-sm">Rich & flavorful main courses</p>
+                    </div>
+                </div>
+                
+                <div class="perspective-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Curry 1: Gongura Mutton -->
+                    <div class="menu-card-3d card-3d-shadow bg-white rounded-3xl overflow-hidden stagger-item" data-name="Gongura Mutton" data-category="curries">
+                        <div class="image-shine relative h-48 bg-gradient-to-br from-[#D4AF37]/20 to-[#800020]/20">
+                            <img src="https://images.unsplash.com/photo-1574653853027-5382a3d23a15?w=400&h=300&fit=crop" alt="Gongura Mutton" class="w-full h-full object-cover">
+                            <div class="absolute top-4 left-4 veg-indicator nonveg-indicator"></div>
+                            <div class="absolute top-4 right-4 bg-[#800020] text-white text-xs font-bold px-3 py-1 rounded-full">Telugu Special</div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#800020] font-bold text-lg">Gongura Mutton</h4>
+                                <span class="price-tag bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] text-white font-bold px-3 py-1 rounded-full text-sm">₹449</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-3">Authentic Andhra mutton with sorrel leaves</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-gray-500">Spice:</span>
+                                    <div class="spice-level">
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Curry 2: Pulusu -->
+                    <div class="menu-card-3d card-3d-shadow bg-white rounded-3xl overflow-hidden stagger-item" data-name="Chepala Pulusu" data-category="curries" style="animation-delay: 0.1s;">
+                        <div class="image-shine relative h-48 bg-gradient-to-br from-[#D4AF37]/20 to-[#800020]/20">
+                            <img src="https://images.unsplash.com/photo-1626200953267-bab7fb664489?w=400&h=300&fit=crop" alt="Chepala Pulusu" class="w-full h-full object-cover">
+                            <div class="absolute top-4 left-4 veg-indicator nonveg-indicator"></div>
+                            <div class="absolute top-4 right-4 popular-badge bg-[#D4AF37] text-[#800020] text-xs font-bold px-3 py-1 rounded-full">Signature</div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#800020] font-bold text-lg">Chepala Pulusu</h4>
+                                <span class="price-tag bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] text-white font-bold px-3 py-1 rounded-full text-sm">₹379</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-3">Traditional fish curry in tangy tamarind gravy</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-gray-500">Spice:</span>
+                                    <div class="spice-level">
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot"></span>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Curry 3 -->
+                    <div class="menu-card-3d card-3d-shadow bg-white rounded-3xl overflow-hidden stagger-item" data-name="Paneer Butter Masala" data-category="curries" style="animation-delay: 0.2s;">
+                        <div class="image-shine relative h-48 bg-gradient-to-br from-[#D4AF37]/20 to-[#800020]/20">
+                            <img src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400&h=300&fit=crop" alt="Paneer Butter Masala" class="w-full h-full object-cover">
+                            <div class="absolute top-4 left-4 veg-indicator"></div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#800020] font-bold text-lg">Paneer Butter Masala</h4>
+                                <span class="price-tag bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] text-white font-bold px-3 py-1 rounded-full text-sm">₹289</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-3">Cottage cheese in rich creamy tomato gravy</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-gray-500">Spice:</span>
+                                    <div class="spice-level">
+                                        <span class="spice-dot active"></span>
+                                        <span class="spice-dot"></span>
+                                        <span class="spice-dot"></span>
+                                    </div>
+                                </div>
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DESSERTS SECTION -->
+            <section class="category-section mb-12" data-section="desserts">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#D4AF37] to-[#E8C547] flex items-center justify-center shadow-lg">
+                        <i data-lucide="cake" class="w-6 h-6 text-[#800020]"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-[#800020]">Desserts</h3>
+                        <p class="text-gray-500 text-sm">Sweet endings to your meal</p>
+                    </div>
+                </div>
+                
+                <div class="perspective-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="menu-card-3d card-3d-shadow bg-white rounded-3xl overflow-hidden stagger-item" data-name="Gulab Jamun" data-category="desserts">
+                        <div class="image-shine relative h-48 bg-gradient-to-br from-[#D4AF37]/20 to-[#800020]/20">
+                            <img src="https://images.unsplash.com/photo-1666190020653-4ed1cc80e455?w=400&h=300&fit=crop" alt="Gulab Jamun" class="w-full h-full object-cover">
+                            <div class="absolute top-4 left-4 veg-indicator"></div>
+                            <div class="absolute top-4 right-4 popular-badge bg-[#D4AF37] text-[#800020] text-xs font-bold px-3 py-1 rounded-full">Must Try</div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#800020] font-bold text-lg">Gulab Jamun</h4>
+                                <span class="price-tag bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] text-white font-bold px-3 py-1 rounded-full text-sm">₹99</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-3">Soft milk dumplings in rose-flavored syrup (2 pcs)</p>
+                            <div class="flex items-center justify-between">
+                                <div class="text-xs text-[#D4AF37] font-medium">Sweet Delight</div>
+                               
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="menu-card-3d card-3d-shadow bg-white rounded-3xl overflow-hidden stagger-item" data-name="Double Ka Meetha" data-category="desserts" style="animation-delay: 0.1s;">
+                        <div class="image-shine relative h-48 bg-gradient-to-br from-[#D4AF37]/20 to-[#800020]/20">
+                            <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&h=300&fit=crop" alt="Double Ka Meetha" class="w-full h-full object-cover">
+                            <div class="absolute top-4 left-4 veg-indicator"></div>
+                            <div class="absolute top-4 right-4 bg-[#800020] text-white text-xs font-bold px-3 py-1 rounded-full">Hyderabadi</div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#800020] font-bold text-lg">Double Ka Meetha</h4>
+                                <span class="price-tag bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] text-white font-bold px-3 py-1 rounded-full text-sm">₹129</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-3">Traditional bread pudding with saffron & nuts</p>
+                            <div class="flex items-center justify-between">
+                                <div class="text-xs text-[#D4AF37] font-medium">House Special</div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- BEVERAGES SECTION -->
+            <section class="category-section mb-12" data-section="beverages">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1B4332] to-[#2D6A4F] flex items-center justify-center shadow-lg">
+                        <i data-lucide="cup-soda" class="w-6 h-6 text-[#D4AF37]"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-[#800020]">Beverages</h3>
+                        <p class="text-gray-500 text-sm">Refreshing drinks & lassis</p>
+                    </div>
+                </div>
+                
+                <div class="perspective-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="menu-card-3d card-3d-shadow bg-white rounded-3xl overflow-hidden stagger-item" data-name="Mango Lassi" data-category="beverages">
+                        <div class="image-shine relative h-48 bg-gradient-to-br from-[#D4AF37]/20 to-[#800020]/20">
+                            <img src="https://images.unsplash.com/photo-1571950006506-f2a4e0c7ec0e?w=400&h=300&fit=crop" alt="Mango Lassi" class="w-full h-full object-cover">
+                            <div class="absolute top-4 left-4 veg-indicator"></div>
+                            <div class="absolute top-4 right-4 popular-badge bg-[#D4AF37] text-[#800020] text-xs font-bold px-3 py-1 rounded-full">Refreshing</div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#800020] font-bold text-lg">Mango Lassi</h4>
+                                <span class="price-tag bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] text-white font-bold px-3 py-1 rounded-full text-sm">₹79</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-3">Creamy yogurt smoothie with fresh mango</p>
+                            <div class="flex items-center justify-between">
+                                <div class="text-xs text-[#2D6A4F] font-medium">Cool & Creamy</div>
+                               
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="menu-card-3d card-3d-shadow bg-white rounded-3xl overflow-hidden stagger-item" data-name="Masala Chai" data-category="beverages" style="animation-delay: 0.1s;">
+                        <div class="image-shine relative h-48 bg-gradient-to-br from-[#D4AF37]/20 to-[#800020]/20">
+                            <img src="https://images.unsplash.com/photo-1571934811356-5cc061b6821f?w=400&h=300&fit=crop" alt="Masala Chai" class="w-full h-full object-cover">
+                            <div class="absolute top-4 left-4 veg-indicator"></div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#800020] font-bold text-lg">Masala Chai</h4>
+                                <span class="price-tag bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] text-white font-bold px-3 py-1 rounded-full text-sm">₹49</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-3">Traditional spiced Indian tea</p>
+                            <div class="flex items-center justify-between">
+                                <div class="text-xs text-[#800020] font-medium">Hot & Aromatic</div>
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- No Results -->
+        <div id="noResults" class="hidden text-center py-16">
+            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-[#800020]/10 flex items-center justify-center">
+                <i data-lucide="search-x" class="w-12 h-12 text-[#800020]"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-[#800020] mb-2">No dishes found</h3>
+            <p class="text-gray-600">Try searching for something else</p>
+        </div>
+    </main>
+
+    <!-- Floating Cart Button -->
+    <div id="floatingCart" class="fixed bottom-24 right-6 md:bottom-8 z-40 hidden">
+        <button onclick="openCart()" class="touch-btn bg-gradient-to-r from-[#800020] to-[#5c0017] text-white p-4 rounded-2xl shadow-2xl flex items-center gap-3 hover:scale-105 transition-transform">
+            <div class="relative">
+                <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                <span id="cartBadge" class="absolute -top-2 -right-2 bg-[#D4AF37] text-[#800020] text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+            </div>
+            <div class="text-left">
+                <div class="text-xs opacity-75">View Cart</div>
+                <div id="cartTotal" class="font-bold">₹0</div>
+            </div>
+        </button>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav fixed bottom-0 left-0 right-0 bg-white/95 md:hidden z-50 py-2 px-4">
+        <div class="flex justify-around items-center">
+            <a href="index.html" class="nav-item flex flex-col items-center py-2 px-4">
+                <div class="nav-icon w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-gray-100">
+                    <i data-lucide="home" class="w-5 h-5 text-gray-500"></i>
+                </div>
+                <span class="text-xs mt-1 text-gray-500">Home</span>
+            </a>
+            <a href="#" class="nav-item active flex flex-col items-center py-2 px-4">
+                <div class="nav-icon w-10 h-10 rounded-xl flex items-center justify-center transition-all">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                </div>
+                <span class="text-xs mt-1 text-[#800020] font-semibold">Menu</span>
+            </a>
+            <a href="contact.html" class="nav-item flex flex-col items-center py-2 px-4">
+                <div class="nav-icon w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-gray-100">
+                    <i data-lucide="phone" class="w-5 h-5 text-gray-500"></i>
+                </div>
+                <span class="text-xs mt-1 text-gray-500">Contact</span>
+            </a>
+            <a href="https://www.swiggy.com" target="_blank" class="nav-item flex flex-col items-center py-2 px-4">
+                <div class="nav-icon w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-gray-100">
+                    <i data-lucide="shopping-bag" class="w-5 h-5 text-gray-500"></i>
+                </div>
+                <span class="text-xs mt-1 text-gray-500">Order</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0 bg-black/60 flex items-end md:items-center justify-center" onclick="closeCart()">
+            <div class="modal-content bg-white rounded-t-3xl md:rounded-3xl w-full max-w-lg max-h-[80vh] overflow-hidden shadow-2xl" onclick="event.stopPropagation()">
+                <div class="p-6 border-b border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-bold text-[#800020]">Your Cart</h3>
+                        <button onclick="closeCart()" class="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+                            <i data-lucide="x" class="w-5 h-5 text-gray-600"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="cartItems" class="p-6 overflow-y-auto max-h-[40vh]"></div>
+                <div class="p-6 bg-[#FFF8E7] border-t border-[#D4AF37]/30">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-gray-600">Subtotal</span>
+                        <span id="cartSubtotal" class="font-bold text-[#800020]">₹0</span>
+                    </div>
+                    <a href="https://www.swiggy.com" target="_blank" class="touch-btn w-full bg-gradient-to-r from-[#800020] to-[#5c0017] text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-2 text-lg">
+                        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                        Order on Swiggy
+                    </a>
+                    <p class="text-center text-gray-500 text-sm mt-3">Complete your order on Swiggy for delivery</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         FIREBASE SDK - LOAD MENU FROM DATABASE
+         ============================================ -->
+    <script type="module">
+        // Firebase imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+        // ============================================
+        // FIREBASE CONFIG - ALANATI TELUGU KITCHEN
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAtmkVtNK_BlkGRSLWxlBtsjKymijlMhtY",
+            authDomain: "alanati-telugu-kitchen.firebaseapp.com",
+            projectId: "alanati-telugu-kitchen",
+            storageBucket: "alanati-telugu-kitchen.appspot.com",
+            messagingSenderId: "511397542426",
+            appId: "1:511397542426:web:b0d6856ae4d45c6b716fa3"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        console.log("🔥 Firebase initialized for Menu!");
+
+        // ============================================
+        // LOAD MENU FROM FIREBASE DATABASE
+        // ============================================
+        const menuContainer = document.getElementById("menuContainer");
+        
+        // ============================================
+        // LOAD MENU FROM FIREBASE
+        // ============================================
+        try {
+            const snapshot = await getDocs(collection(db, "menu"));
+            
+            if (snapshot.empty) {
+                menuContainer.innerHTML = `
+                    <div class="col-span-full text-center py-8">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-[#D4AF37]/20 flex items-center justify-center">
+                            <i data-lucide="utensils" class="w-8 h-8 text-[#D4AF37]"></i>
+                        </div>
+                        <p class="text-gray-500">No menu items in Firebase yet.</p>
+                        <p class="text-sm text-[#800020] mt-2 font-medium">Add items via Admin Dashboard → See static menu below ↓</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                console.log("📭 No menu items found in Firebase");
+            } else {
+                // Group items by category
+                const menuByCategory = {};
+                snapshot.forEach(doc => {
+                    const item = { id: doc.id, ...doc.data() };
+                    const category = item.category || 'other';
+                    if (!menuByCategory[category]) {
+                        menuByCategory[category] = [];
+                    }
+                    menuByCategory[category].push(item);
+                });
+
+                // Category display settings
+                const categoryConfig = {
+                    soups: { icon: 'soup', name: 'Soups', color: 'from-[#800020] to-[#5c0017]' },
+                    starters: { icon: 'flame', name: 'Starters', color: 'from-[#1B4332] to-[#2D6A4F]' },
+                    biryanis: { icon: 'beef', name: 'Biryanis', color: 'from-[#D4AF37] to-[#E8C547]' },
+                    curries: { icon: 'chef-hat', name: 'Curries', color: 'from-[#800020] to-[#5c0017]' },
+                    desserts: { icon: 'cake', name: 'Desserts', color: 'from-[#D4AF37] to-[#E8C547]' },
+                    beverages: { icon: 'cup-soda', name: 'Beverages', color: 'from-[#1B4332] to-[#2D6A4F]' },
+                    other: { icon: 'utensils', name: 'Other Items', color: 'from-[#800020] to-[#5c0017]' }
+                };
+
+                let html = `
+                    <div class="col-span-full mb-4">
+                        <div class="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full">
+                            <i data-lucide="database" class="w-4 h-4"></i>
+                            <span class="text-sm font-medium">✓ Loaded ${snapshot.size} items from Firebase</span>
+                        </div>
+                    </div>
+                `;
+
+                // Render each category
+                for (const [category, items] of Object.entries(menuByCategory)) {
+                    const config = categoryConfig[category] || categoryConfig.other;
+                    
+                    // Category Header
+                    html += `
+                        <div class="col-span-full flex items-center gap-4 mb-4 mt-6">
+                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br ${config.color} flex items-center justify-center shadow-lg">
+                                <i data-lucide="${config.icon}" class="w-6 h-6 text-[#D4AF37]"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-[#800020]">${config.name}</h3>
+                                <p class="text-gray-500 text-sm">${items.length} items</p>
+                            </div>
+                        </div>
+                    `;
+
+                    // Render items in this category
+                    items.forEach((item, index) => {
+                        const isVeg = item.isVeg === true;
+                        const spiceLevel = item.spiceLevel || 2;
+                        
+                        html += `
+                            <div class="menu-card-3d card-3d-shadow bg-white rounded-3xl overflow-hidden" 
+                                 data-name="${item.name}" 
+                                 data-category="${category}"
+                                 style="animation-delay: ${index * 0.1}s;">
+                                <div class="image-shine relative h-48 bg-gradient-to-br from-[#D4AF37]/20 to-[#800020]/20">
+                                    <img src="${item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop'}" 
+                                         alt="${item.name}" 
+                                         class="w-full h-full object-cover"
+                                         onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop'">
+                                    <div class="absolute top-4 left-4 veg-indicator ${isVeg ? '' : 'nonveg-indicator'}"></div>
+                                    ${item.badge ? `<div class="absolute top-4 right-4 popular-badge bg-[#D4AF37] text-[#800020] text-xs font-bold px-3 py-1 rounded-full">${item.badge}</div>` : ''}
+                                    ${item.available === false ? `
+                                        <div class="absolute inset-0 bg-black/50 flex items-center justify-center">
+                                            <span class="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold">Unavailable</span>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <div class="p-5">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h4 class="text-[#800020] font-bold text-lg">${item.name}</h4>
+                                        <span class="price-tag bg-gradient-to-r from-[#1B4332] to-[#2D6A4F] text-white font-bold px-3 py-1 rounded-full text-sm">₹${item.price}</span>
+                                    </div>
+                                    <p class="text-gray-600 text-sm mb-3">${item.description || 'Delicious dish prepared with care'}</p>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs text-gray-500">Spice:</span>
+                                            <div class="spice-level">
+                                                <span class="spice-dot ${spiceLevel >= 1 ? 'active' : ''}"></span>
+                                                <span class="spice-dot ${spiceLevel >= 2 ? 'active' : ''}"></span>
+                                                <span class="spice-dot ${spiceLevel >= 3 ? 'active' : ''}"></span>
+                                            </div>
+                                        </div>
+                                        <button onclick="addToCart('${item.name.replace(/'/g, "\\'")}', ${item.price})" 
+                                                class="touch-btn bg-[#800020]/10 hover:bg-[#800020] text-[#800020] hover:text-white p-2 rounded-xl transition-all"
+                                                ${item.available === false ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>
+                                            <i data-lucide="plus" class="w-5 h-5"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                menuContainer.innerHTML = html;
+                lucide.createIcons();
+
+                // Apply 3D card effects to Firebase-loaded items
+                document.querySelectorAll('#menuContainer .menu-card-3d').forEach(card => {
+                    card.addEventListener('mousemove', function(e) {
+                        const rect = this.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        const centerX = rect.width / 2;
+                        const centerY = rect.height / 2;
+                        const rotateX = (y - centerY) / 20;
+                        const rotateY = (centerX - x) / 20;
+                        this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px) scale(1.02)`;
+                    });
+                    card.addEventListener('mouseleave', function() {
+                        this.style.transform = '';
+                    });
+                });
+
+                console.log("✅ Menu loaded from Firebase!", snapshot.size, "items found");
+            }
+        } catch (error) {
+            console.error("❌ Error loading menu from Firebase:", error);
+            menuContainer.innerHTML = `
+                <div class="col-span-full text-center py-8">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
+                        <i data-lucide="alert-circle" class="w-8 h-8 text-red-500"></i>
+                    </div>
+                    <p class="text-gray-500">Could not load menu from Firebase.</p>
+                    <p class="text-sm text-[#D4AF37] mt-2">Showing static menu below ↓</p>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+        
+    </script>
+
+    <script>
+        lucide.createIcons();
+        let cart = [];
+
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        }
+
+        function filterCategory(category) {
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.category === category) tab.classList.add('active');
+            });
+
+            document.querySelectorAll('.category-section').forEach(section => {
+                if (category === 'all' || section.dataset.section === category) {
+                    section.style.display = 'block';
+                    setTimeout(() => section.classList.add('visible'), 50);
+                } else {
+                    section.classList.remove('visible');
+                    setTimeout(() => section.style.display = 'none', 300);
+                }
+            });
+            document.getElementById('noResults').classList.add('hidden');
+        }
+
+        function searchMenu() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.menu-card-3d');
+            let found = false;
+
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.category === 'all') tab.classList.add('active');
+            });
+
+            document.querySelectorAll('.category-section').forEach(section => {
+                section.style.display = 'block';
+                section.classList.add('visible');
+            });
+
+            cards.forEach(card => {
+                const name = card.dataset.name.toLowerCase();
+                if (name.includes(query) || query === '') {
+                    card.style.display = 'block';
+                    found = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            document.querySelectorAll('.category-section').forEach(section => {
+                if (query !== '') {
+                    const sectionCards = section.querySelectorAll('.menu-card-3d');
+                    let sectionHasVisible = false;
+                    sectionCards.forEach(card => {
+                        if (card.style.display !== 'none') sectionHasVisible = true;
+                    });
+                    section.style.display = sectionHasVisible ? 'block' : 'none';
+                }
+            });
+
+            document.getElementById('noResults').classList.toggle('hidden', found || query === '');
+        }
+
+        function addToCart(name, price) {
+            const existingItem = cart.find(item => item.name === name);
+            if (existingItem) existingItem.quantity++;
+            else cart.push({ name, price, quantity: 1 });
+            updateCartUI();
+            event.target.closest('button').classList.add('cart-bounce');
+            setTimeout(() => event.target.closest('button').classList.remove('cart-bounce'), 500);
+        }
+
+        function removeFromCart(name) {
+            const index = cart.findIndex(item => item.name === name);
+            if (index > -1) {
+                if (cart[index].quantity > 1) cart[index].quantity--;
+                else cart.splice(index, 1);
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            document.getElementById('cartBadge').textContent = totalItems;
+            document.getElementById('cartTotal').textContent = `₹${totalPrice}`;
+            document.getElementById('cartSubtotal').textContent = `₹${totalPrice}`;
+            document.getElementById('floatingCart').classList.toggle('hidden', totalItems === 0);
+
+            const cartItemsContainer = document.getElementById('cartItems');
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                            <i data-lucide="shopping-cart" class="w-8 h-8 text-gray-400"></i>
+                        </div>
+                        <p class="text-gray-500">Your cart is empty</p>
+                    </div>
+                `;
+            } else {
+                cartItemsContainer.innerHTML = cart.map(item => `
+                    <div class="flex items-center justify-between py-4 border-b border-gray-100">
+                        <div>
+                            <h4 class="font-medium text-[#800020]">${item.name}</h4>
+                            <p class="text-sm text-gray-500">₹${item.price} each</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="removeFromCart('${item.name}')" class="touch-btn w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-[#800020] hover:text-white transition-colors">
+                                <i data-lucide="minus" class="w-4 h-4"></i>
+                            </button>
+                            <span class="font-bold text-[#800020] w-6 text-center">${item.quantity}</span>
+                            <button onclick="addToCart('${item.name}', ${item.price})" class="touch-btn w-8 h-8 rounded-full bg-[#800020] text-white flex items-center justify-center hover:bg-[#5c0017] transition-colors">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            lucide.createIcons();
+        }
+
+        function openCart() { document.getElementById('cartModal').classList.remove('hidden'); }
+        function closeCart() { document.getElementById('cartModal').classList.add('hidden'); }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.category-section').forEach(section => observer.observe(section));
+
+        document.querySelectorAll('.stagger-item').forEach((item, index) => {
+            item.style.animationDelay = `${index * 0.1}s`;
+            setTimeout(() => item.style.opacity = '1', 100 + index * 100);
+        });
+
+        document.querySelectorAll('.menu-card-3d').forEach(card => {
+            card.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 15;
+                const rotateY = (centerX - x) / 15;
+                this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px) scale(1.02)`;
+            });
+            card.addEventListener('mouseleave', function() { this.style.transform = ''; });
+        });
+
+        document.querySelectorAll('.touch-btn').forEach(btn => {
+            btn.addEventListener('mousedown', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                this.style.setProperty('--x', x + '%');
+                this.style.setProperty('--y', y + '%');
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.category-section').forEach(section => section.classList.add('visible'));
+        });
+    </script>
+</body>
+</html>
